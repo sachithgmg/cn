@@ -1,0 +1,60 @@
+#include<stdio.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<fcntl.h>
+#include<poll.h>
+int main(void){
+
+	int client1,client2,client3,client4;
+	char buf1[1024];
+	
+	printf("Start\n");
+
+	int ret = mkfifo("/home/kapugamage/Desktop/CN_Programs/1",0666);
+	if(ret==-1){
+		perror("mkfifo");
+	}
+	mkfifo("/home/kapugamage/Desktop/CN_Programs/2",0666);
+	mkfifo("/home/kapugamage/Desktop/CN_Programs/3",0666);
+	mkfifo("/home/kapugamage/Desktop/CN_Programs/4",0666);
+	printf("%d",ret);
+	client1 = open("/home/kapugamage/Desktop/CN_Programs/1",O_RDWR);
+	client2 =	open("/home/kapugamage/Desktop/CN_Programs/2",O_RDWR);
+	client3 = open("/home/kapugamage/Desktop/CN_Programs/3",O_RDWR);
+	client4 = open("/home/kapugamage/Desktop/CN_Programs/4",O_RDWR);
+	struct pollfd clients[4]; 
+	clients[0].fd = client1;
+	clients[0].events = POLLIN|POLLPRI;
+
+	clients[1].fd = client2;
+	clients[1].events = POLLIN;
+
+	clients[2].fd = client3;
+	clients[2].events = POLLIN;
+
+	clients[3].fd = client4;
+	clients[3].events = POLLIN;
+
+	//poll(clients,4,0);
+	while(1){
+		printf("%d\n",poll(clients,4,-1));
+		if((clients[0].revents&&POLLIN) ==POLLIN){
+			printf("client1\n");
+			read(client1,&buf1,1024);
+			printf("Clien1 : %s\n",buf1);
+			memset(buf1, 0, 1024);
+		}
+		if(clients[1].revents ==POLLIN){
+			//printf("client2\n");
+			read(client2,&buf1,1024);
+			printf("Client2: %s\n",buf1);
+			memset(buf2, 0, 1024);
+		}
+	
+	}
+	//buf1[0] = '\0';
+	//while(1){
+	//	
+	//	
+	//}
+}
