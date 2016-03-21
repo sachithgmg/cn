@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#include<netdb.h>
+#include <netinet/in.h>
+
+#include<string.h>
+
+int main(void){
+	
+	int sfd;
+	struct sockaddr_in server, client;
+	
+	sfd = socket(AF_INET,SOCK_STREAM,0);
+	if(sfd < 0){
+		perror("socket");
+		exit(0);
+	}
+	
+	server.sin_family = AF_INET;
+	//server.sin_path = strcpy(saun.sun_path, "localhost");
+	server.sin_port = htons(5003);  		     
+	inet_aton("127.0.0.1", &(server.sin_addr)); 
+	
+	memset(&(server.sin_zero), '\0', 8);
+	if((connect(sfd,(struct sockaddr *)&server,sizeof(server)))<0){
+	
+		perror("connect");
+	}
+	
+	
+	
+	printf("Connected");
+	char buff[1024];
+	while(1){
+		fgets(buff,1024,stdin);
+		write(sfd,buff,1024);
+	}
+}
+
